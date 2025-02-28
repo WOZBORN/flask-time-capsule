@@ -1,0 +1,160 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ capsule.title }} - Digital Time Capsule{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="card shadow mb-4">
+        <div class="card-header {% if is_unlocked %}bg-success{% else %}bg-danger{% endif %} text-white">
+            <div class="d-flex justify-content-between align-items-center">
+                <h3 class="mb-0">
+                    {% if is_unlocked %}
+                    <i class="fas fa-unlock me-2"></i>
+                    {% else %}
+                    <i class="fas fa-lock me-2"></i>
+                    {% endif %}
+                    {{ capsule.title }}
+                </h3>
+                {% if is_owner %}
+                <div>
+                    {% if not is_unlocked %}
+                    <a href="{{ url_for('capsule.edit_capsule', capsule_id=capsule.id) }}" class="btn btn-light">
+                        <i class="fas fa-edit me-1"></i>Edit Capsule
+                    </a>
+                    {% endif %}
+                </div>
+                {% endif %}
+            </div>
+        </div>
+        <div class="card-body">
+            <div class="row mb-4">
+                <div class="col-md-8">
+                    <p class="lead">{{ capsule.description }}</p>
+                    <div class="d-flex mb-3">
+                        <div class="me-4">
+                            <strong>Created on:</strong>
+                            <span class="text-muted">{{ capsule.created_at.strftime('%Y-%m-%d') }}</span>
+                        </div>
+                        <div>
+                            <strong>Unlocked on:</strong>
+                            <span class="text-muted">{{ capsule.unlock_date.strftime('%Y-%m-%d') }}</span>
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <strong>Status:</strong>
+                        {% if is_unlocked %}
+                        <span class="badge bg-success">Unlocked</span>
+                        {% else %}
+                        <span class="badge bg-danger">
+                            Locked
+                            {% set days_remaining = (capsule.unlock_date - now).days %}
+                            {% if days_remaining > 0 %}
+                                (Unlocks in {{ days_remaining }} days)
+                            {% else %}
+                                (Unlocks today)
+                            {% endif %}
+                        </span>
+                        {% endif %}
+
+                        {% if capsule.is_public %}
+                        <span class="badge bg-info">Public</span>
+                        {% else %}
+                        <span class="badge bg-secondary">Private</span>
+                        {% endif %}
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="card bg-light">
+                        <div class="card-body">
+                            <h5 class="card-title">Access Code</h5>
+                            <p class="card-text">
+                                <span class="badge access-code-badge p-2">{{ capsule.access_code }}</span>
+                            </p>
+                            <small class="text-muted">Share this code with others to grant them access.</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            {% if is_unlocked or is_owner %}
+            <div class="row">
+                <div class="col-md-12">
+                    <ul class="nav nav-tabs" id="contentTabs" role="tablist">
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link active" id="text-tab" data-bs-toggle="tab" data-bs-target="#text" type="button" role="tab">Text Memories ({{ text_items|length }})</button>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link" id="file-tab" data-bs-toggle="tab" data-bs-target="#file" type="button" role="tab">File Memories ({{ file_items|length }})</button>
+                        </li>
+                    </ul>
+                    <div class="tab-content p-3" id="contentTabsContent">
+                        <div class="tab-pane fade show active" id="text" role="tabpanel">
+                            {% if text_items %}
+                                {% for item in text_items %}
+                                <div class="card mb-3">
+                                    <div class="card-body">
+                                        <p class="card-text">{{ item.content|safe }}</p>
+                                    </div>
+                                    <div class="card-footer text-muted small">
+                                        Added on {{ item.created_at.strftime('%Y-%m-%d %H:%M') }}
+                                    </div>
+                                </div>
+                                {% endfor %}
+                            {% else %}
+                                <p class="text-muted mt-3">No text memories in this capsule.</p>
+                            {% endif %}
+                        </div>
+                        <div class="tab-pane fade" id="file" role="tabpanel">
+                            {% if file_items %}
+                                <div class="row">
+                                {% for item in file_items %}
+                                    <div class="col-md-4 mb-3">
+                                        <div class="card h-100">
+                                            <div class="card-body">
+                                                <h5 class="card-title">
+                                                    {% if item.type == 'image' %}
+                                                    <i class="fas fa-image text-primary me-2"></i>
+                                                    {% elif item.type == 'audio' %}
+                                                    <i class="fas fa-music text-success me-2"></i>
+                                                    {% else %}
+                                                    <i class="fas fa-file-alt text-info me-2"></i>
+                                                    {% endif %}
+                                                    {{ item.file_name }}
+                                                </h5>
+
+                                                {% if item.type == 'image' %}
+                                                <img src="{{ item.file_path }}" class="file-preview" alt="{{ item.file_name }}">
+                                                {% elif item.type == 'audio' %}
+                                                <audio controls class="w-100 mt-2">
+                                                    <source src="{{ item.file_path }}" type="audio/mpeg">
+                                                    Your browser does not support the audio element.
+                                                </audio>
+                                                {% endif %}
+                                            </div>
+                                            <div class="card-footer">
+                                                <small class="text-muted">Added on {{ item.created_at.strftime('%Y-%m-%d') }}</small>
+                                                <a href="{{ url_for('capsule.download_file', item_id=item.id) }}" class="btn btn-sm btn-outline-primary float-end">
+                                                    <i class="fas fa-download me-1"></i>Download
+                                                </a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                {% endfor %}
+                                </div>
+                            {% else %}
+                                <p class="text-muted mt-3">No file memories in this capsule.</p>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% else %}
+            <div class="alert alert-warning">
+                <i class="fas fa-lock me-2"></i>
+                This time capsule is still locked and will be revealed on {{ capsule.unlock_date.strftime('%Y-%m-%d') }}.
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

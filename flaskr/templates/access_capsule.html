@@ -1,0 +1,27 @@
+{% extends 'base.html' %}
+
+{% block title %}Access Time Capsule - Digital Time Capsule{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card shadow">
+                <div class="card-header bg-primary text-white">
+                    <h3 class="mb-0">Access a Time Capsule</h3>
+                </div>
+                <div class="card-body">
+                    <p>Enter the access code to open a time capsule.</p>
+                    <form method="POST" action="{{ url_for('capsule.access_capsule') }}">
+                        <div class="mb-3">
+                            <label for="access_code" class="form-label">Access Code</label>
+                            <input type="text" class="form-control" id="access_code" name="access_code" required>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Access Capsule</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

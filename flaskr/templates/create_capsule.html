@@ -1,0 +1,41 @@
+{% extends 'base.html' %}
+
+{% block title %}Create Time Capsule - Digital Time Capsule{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card shadow">
+                <div class="card-header bg-primary text-white">
+                    <h3 class="mb-0">Create a New Time Capsule</h3>
+                </div>
+                <div class="card-body">
+                    <form method="POST" action="{{ url_for('capsule.create_capsule') }}">
+                        <div class="mb-3">
+                            <label for="title" class="form-label">Capsule Title</label>
+                            <input type="text" class="form-control" id="title" name="title" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="description" class="form-label">Description</label>
+                            <textarea class="form-control" id="description" name="description" rows="3"></textarea>
+                            <small class="form-text text-muted">Describe what this time capsule is about or who it's for.</small>
+                        </div>
+                        <div class="mb-3">
+                            <label for="unlock_date" class="form-label">Unlock Date</label>
+                            <input type="date" class="form-control" id="unlock_date" name="unlock_date" required>
+                            <small class="form-text text-muted">The date when this time capsule will be unlocked.</small>
+                        </div>
+                        <div class="mb-3 form-check">
+                            <input type="checkbox" class="form-check-input" id="is_public" name="is_public">
+                            <label class="form-check-label" for="is_public">Make this capsule public</label>
+                            <small class="form-text text-muted d-block">Public capsules will be visible to anyone when unlocked.</small>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Create Time Capsule</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

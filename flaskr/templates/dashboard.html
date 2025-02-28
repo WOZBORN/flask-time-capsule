@@ -1,0 +1,93 @@
+{% extends 'base.html' %}
+
+{% block title %}Dashboard - Digital Time Capsule{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="p-4 bg-white shadow-sm rounded">
+                <h1>Welcome, {{ user.username }}!</h1>
+                <p class="lead">Manage your time capsules and create new memories for the future.</p>
+                <a href="{{ url_for('capsule.create_capsule') }}" class="btn btn-primary">
+                  <i class="fas fa-plus me-2"></i>Create New Time Capsule
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-6">
+            <div class="card mb-4">
+                <div class="card-header bg-success text-white">
+                    <h4><i class="fas fa-unlock me-2"></i>Unlocked Time Capsules</h4>
+                </div>
+                <div class="card-body">
+                    {% if unlocked_capsules %}
+                    <div class="list-group">
+                        {% for capsule in unlocked_capsules %}
+                        <a href="{{ url_for('capsule.view_capsule', capsule_id=capsule.id) }}" class="list-group-item list-group-item-action">
+                            <div class="d-flex w-100 justify-content-between">
+                                <h5 class="mb-1">{{ capsule.title }}</h5>
+                                <small>Unlocked on {{ capsule.unlock_date.strftime('%Y-%m-%d') }}</small>
+                            </div>
+                            <p class="mb-1">{{ capsule.description|truncate(100) }}</p>
+                            <small>
+                                {% if capsule.is_public %}
+                                <span class="badge bg-info">Public</span>
+                                {% else %}
+                                <span class="badge bg-secondary">Private</span>
+                                {% endif %}
+                                <span class="badge access-code-badge">Access Code: {{ capsule.access_code }}</span>
+                            </small>
+                        </a>
+                        {% endfor %}
+                    </div>
+                    {% else %}
+                    <p>You don't have any unlocked time capsules yet.</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6">
+            <div class="card mb-4">
+                <div class="card-header bg-danger text-white">
+                    <h4><i class="fas fa-lock me-2"></i>Locked Time Capsules</h4>
+                </div>
+                <div class="card-body">
+                    {% if locked_capsules %}
+                    <div class="list-group">
+                        {% for capsule in locked_capsules %}
+                        <a href="{{ url_for('capsule.edit_capsule', capsule_id=capsule.id) }}" class="list-group-item list-group-item-action">
+                            <div class="d-flex w-100 justify-content-between">
+                                <h5 class="mb-1">{{ capsule.title }}</h5>
+                                <small>Unlocks on {{ capsule.unlock_date.strftime('%Y-%m-%d') }}</small>
+                            </div>
+                            <p class="mb-1">{{ capsule.description|truncate(100) }}</p>
+                            <small>
+                                {% if capsule.is_public %}
+                                <span class="badge bg-info">Public</span>
+                                {% else %}
+                                <span class="badge bg-secondary">Private</span>
+                                {% endif %}
+                                <span class="badge access-code-badge">Access Code: {{ capsule.access_code }}</span>
+                                {% set days_remaining = (capsule.unlock_date - now).days %}
+                                {% if days_remaining > 0 %}
+                                <span class="badge bg-warning text-dark">{{ days_remaining }} days remaining</span>
+                                {% else %}
+                                <span class="badge bg-warning text-dark">Unlocks today!</span>
+                                {% endif %}
+                            </small>
+                        </a>
+                        {% endfor %}
+                    </div>
+                    {% else %}
+                    <p>You don't have any locked time capsules yet. <a href="{{ url_for('capsule.create_capsule') }}">Create one now</a>!</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

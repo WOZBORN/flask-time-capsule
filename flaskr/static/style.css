@@ -1,0 +1,66 @@
+/* static/css/style.css */
+.capsule-icon {
+    font-size: 2rem;
+    margin-right: 1rem;
+}
+
+.countdown-timer {
+    font-family: 'Courier New', monospace;
+    font-weight: bold;
+}
+
+.capsule-badge {
+    font-size: 0.8rem;
+    margin-right: 0.5rem;
+}
+
+/* Animations for locked/unlocked icons */
+@keyframes pulse {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.1); }
+    100% { transform: scale(1); }
+}
+
+.locked-icon {
+    animation: pulse 2s infinite;
+}
+
+/* Custom styling for file previews */
+.image-preview {
+    border-radius: 5px;
+    transition: transform 0.3s ease;
+}
+
+.image-preview:hover {
+    transform: scale(1.05);
+}
+
+/* Capsule cards hover effect */
+.capsule-card {
+    overflow: hidden;
+    transition: all 0.3s ease;
+    border: 1px solid rgba(0,0,0,0.1);
+}
+
+.capsule-card:hover {
+    box-shadow: 0 8px 16px rgba(0,0,0,0.1);
+}
+
+/* Utility for wrapping long text */
+.text-wrap {
+    word-break: break-word;
+}
+
+/* Nicer form styling */
+.form-control:focus {
+    border-color: #4e73df;
+    box-shadow: 0 0 0 0.2rem rgba(78, 115, 223, 0.25);
+}
+
+/* Add a bit of padding to container on mobile */
+@media (max-width: 768px) {
+    .container {
+        padding-left: 15px;
+        padding-right: 15px;
+    }
+}

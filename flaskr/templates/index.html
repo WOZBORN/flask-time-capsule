@@ -1,0 +1,108 @@
+{% extends 'base.html' %}
+
+{% block title %}Digital Time Capsule - Store Your Memories{% endblock %}
+
+{% block content %}
+<section class="hero-section">
+    <div class="container text-center">
+        <h1 class="display-4">Welcome to Digital Time Capsule</h1>
+        <p class="lead">Store your messages, files, and memories to be unlocked in the future.</p>
+        {% if not session.user_id %}
+        <div class="mt-4">
+            <a href="{{ url_for('auth.register') }}" class="btn btn-light btn-lg me-2">Sign Up</a>
+            <a href="{{ url_for('auth.login') }}" class="btn btn-outline-light btn-lg">Login</a>
+        </div>
+        {% else %}
+        <div class="mt-4">
+            <a href="{{ url_for('capsule.create_capsule') }}" class="btn btn-light btn-lg">Create Your Time Capsule</a>
+        </div>
+        {% endif %}
+    </div>
+</section>
+
+<div class="container">
+    <div class="row mb-5">
+        <div class="col-md-4 text-center mb-4">
+            <div class="p-4 bg-white rounded shadow-sm">
+                <i class="fas fa-lock fa-3x mb-3 text-primary"></i>
+                <h3>Secure Storage</h3>
+                <p>Lock away your memories, messages, and files until a future date of your choosing.</p>
+            </div>
+        </div>
+        <div class="col-md-4 text-center mb-4">
+            <div class="p-4 bg-white rounded shadow-sm">
+                <i class="fas fa-hourglass-half fa-3x mb-3 text-primary"></i>
+                <h3>Time Controlled</h3>
+                <p>Set the exact date when your time capsule will be unlocked and revealed.</p>
+            </div>
+        </div>
+        <div class="col-md-4 text-center mb-4">
+            <div class="p-4 bg-white rounded shadow-sm">
+                <i class="fas fa-share-alt fa-3x mb-3 text-primary"></i>
+                <h3>Share with Others</h3>
+                <p>Create public capsules or share private ones with special access codes.</p>
+            </div>
+        </div>
+    </div>
+
+    {% if unlocked_capsules %}
+    <h2 class="mb-4">Recently Unlocked Public Capsules</h2>
+    <div class="row">
+        {% for capsule in unlocked_capsules %}
+        <div class="col-md-4">
+            <div class="card capsule-card h-100">
+                <div class="card-body">
+                    <h5 class="card-title">
+                        <i class="fas fa-unlock unlocked-icon me-2"></i>{{ capsule.title }}
+                    </h5>
+                    <h6 class="card-subtitle mb-2 text-muted">Unlocked on {{ capsule.unlock_date.strftime('%Y-%m-%d') }}</h6>
+                    <p class="card-text">{{ capsule.description|truncate(100) }}</p>
+                </div>
+                <div class="card-footer bg-transparent">
+                    <a href="{{ url_for('capsule.view_capsule', capsule_id=capsule.id) }}" class="btn btn-outline-primary btn-sm">View Capsule</a>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+
+    {% if locked_capsules %}
+    <h2 class="mt-5 mb-4">Upcoming Public Capsules</h2>
+    <div class="row">
+        {% for capsule in locked_capsules %}
+        <div class="col-md-4">
+            <div class="card capsule-card h-100">
+                <div class="card-body">
+                    <h5 class="card-title">
+                        <i class="fas fa-lock locked-icon me-2"></i>{{ capsule.title }}
+                    </h5>
+                    <h6 class="card-subtitle mb-2 text-muted">Will unlock on {{ capsule.unlock_date.strftime('%Y-%m-%d') }}</h6>
+                    <p class="card-text">{{ capsule.description|truncate(100) }}</p>
+                    <p class="countdown">
+                        <i class="fas fa-hourglass-start me-1"></i>
+                        {% set days_remaining = (capsule.unlock_date - now).days %}
+                        {% if days_remaining > 0 %}
+                            Unlocks in {{ days_remaining }} days
+                        {% else %}
+                            Unlocks today!
+                        {% endif %}
+                    </p>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    // Add the current date to the template
+    document.addEventListener('DOMContentLoaded', function() {
+        // This script is just for demonstration purposes
+        // In a real flaskr, you'd use the server-side date
+    });
+</script>
+{% endblock %}

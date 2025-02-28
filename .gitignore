@@ -1,0 +1,23 @@
+# Virtual environment
+.venv/
+venv/
+.env/
+env/
+
+# Env files
+.env
+env
+
+# Build files
+__pycache__/
+
+# Common
+*.pyc
+*.db
+
+# IDEs
+.idea/
+.vscode/
+
+# Your local upload files
+uploads/
